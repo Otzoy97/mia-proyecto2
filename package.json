@@ -1,0 +1,14 @@
+{
+  "name": "mia-proyecto2",
+  "version": "1.0.0",
+  "description": "Aplicación web para ejemplificar el uso de Oracle Database Express Edition, NodeJS y Angular",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "S. Otzoy",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
