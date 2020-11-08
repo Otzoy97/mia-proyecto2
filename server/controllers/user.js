@@ -17,56 +17,101 @@ async function create(req) {
     req.date, req.email, pwd, req.photo, new Date()]
     try {
         con = await OracleDB.getConnection(dbconfig)
-        await con.execute(query, binds,{autoCommit: true})
+        await con.execute(query, binds, { autoCommit: true })
     } catch (err) {
         console.error(err)
-        return {ok:false, err}
+        return { ok: false, err }
     } finally {
         if (con) {
-            con.release((err)=> {
-                if(err) {
+            con.release((err) => {
+                if (err) {
                     console.error(err)
                 }
             })
         }
     }
-    return {ok: true}
+    return { ok: true }
 }
 
+/**
+ * Intenta crear un token utilizan el identificador del usuario
+ * 
+ * @param {*} req 
+ */
 async function login(req) {
     let con, result
     // consulta a ejecutar
-    const query = "SELECT usuario_id, contra" +
-    " FROM miap2.usuario " +
-    " WHERE correo = :correo"
+    const query = "SELECT usuario_id, contra, esadmin" +
+        " FROM miap2.usuario " +
+        " WHERE correo = :correo"
     // se encripta la contraseña
     const pwd = bcrypt.hashSync(req.pwd, 10)
     // datos a insertar
     const binds = [req.email]
     try {
         con = await OracleDB.getConnection(dbconfig)
-        result = await con.execute(query, binds,{autoCommit: true, maxRows: 1})
+        result = await con.execute(query, binds, { autoCommit: true, maxRows: 1 })
     } catch (err) {
         console.error(err)
-        return {ok:false, err}
+        return { ok: false, err }
     } finally {
         if (con) {
-            con.release((err)=> {
-                if(err) {
+            con.release((err) => {
+                if (err) {
                     console.error(err)
                 }
             })
         }
     }
-    if(result.rows.length == 1){
-        if(bcrypt.compareSync(req.pwd, result.rows[0][1])) {
-            let token = sign({id:result.rows[0][0]},process.env.JWT_SEED, {expiresIn:'48h'}) 
-            return {ok: true, token}
+    if (result.rows.length == 1) {
+        if (bcrypt.compareSync(req.pwd, result.rows[0][1])) {
+            let token = sign({ id: result.rows[0][0], esAdmin: result.rows[0][2] }, 'seed-de-dessarollo-miap2', { expiresIn: '48h' })
+            return { ok: true, token }
         } else {
-            return {ok: false}
+            return { ok: false }
         }
     }
-    return {ok: false}
+    return { ok: false }
 }
 
-module.exports = { create ,login}
+/**
+ * Recupera a un usuario por el id
+ * 
+ * @param {*} req 
+ */
+async function getById(req) {
+    let con, result
+    const query = "SELECT nombre, apellido, pais, fecha_nac, correo, foto " +
+        "FROM USUARIO WHERE usuario_id = :id"
+    const binds = [req.id]
+    try {
+        con = await OracleDB.getConnection(dbconfig)
+        result = await con.execute(query, binds, { autoCommit: true, maxRows: 1 })
+    } catch (error) {
+        console.error(err)
+        return { ok: false, err }
+    } finally {
+        if (con) {
+            con.release((err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        }
+    }
+    if (result.rows.length >= 1) {
+        return {
+            ok: true, result: {
+                name: result.rows[0][0],
+                surname: result.rows[0][1],
+                country: result.rows[0][2],
+                birthday: result.rows[0][3],
+                email: result.rows[0][4],
+                photo: result.rows[0][5]
+            }
+        }
+    }
+    return { ok: false }
+}
+
+module.exports = { create, login, getById }
