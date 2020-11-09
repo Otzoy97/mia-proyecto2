@@ -1,0 +1,54 @@
+<div class="container vh-100">
+  <div class="row align-items-center h-100">
+    <div class="col mx-auto">
+      <form class="jumbotron">
+        <h3 class="text-center">
+          Iniciar sesión
+        </h3>
+        <p class="text-center">
+          ¿No tiene cuenta?
+          <a routerLink="/singup" class="text-primary">Registrar</a>
+        </p>
+        <div class="form-group">
+          <label for="txtEmail">Usuario</label>
+          <input type="email" class="form-control" id="txtEmail" placeholder="ejemplo@dominio.com" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="txtPwd">Contraseña</label>
+          <input type="password" class="form-control" id="txtPwd" placeholder="contraseña" required>
+        </div>
+        <div class="text-center">
+          <p>
+            <a class="text-primary" href="#" data-toggle="modal" data-target="#recuperar-cotrasenia">¿Olvidaste tu contraseña?</a>
+          </p>
+          <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="modal fade" id="recuperar-cotrasenia" tabindex="-1" aria-labelledby="recuperar-cotrasenia-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="recuperar-cotrasenia-modal">Recuperar contraseña</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form>
+          <div class="modal-body">
+            <p>
+              Ingrese el correo electrónico con el que se registró. Se enviará un enlace con el que podrá reestablecer
+              su contraseña
+            </p>
+            <input type="email" class="form-control" id="txtEmailRec" placeholder="ejemplo@dominio.com" required autofocus>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Enviar correo</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
