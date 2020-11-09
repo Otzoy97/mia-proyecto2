@@ -1,6 +1,6 @@
-const express = require('express')
-const app = express()
+const {Router} = require('express')
+const router = Router()
 
-app.use(require('./user'))
+router.use(require('./user'))
 
-module.exports = app
+module.exports = router

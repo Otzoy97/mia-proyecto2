@@ -1,16 +1,16 @@
 const { create, login, getById, update, confirm } = require('../controllers/user')
-const emailService = require('../utils/nodemailer')
-const express = require('express');
 const { checkToken } = require('../utils/middlewares/auth');
-const app = express()
+const { Router } = require('express')
 
+const emailService = require('../utils/nodemailer')
+const router = Router()
 
-app.post('/user/signup', async (req, res) => {
+router.post('/user/signup', async (req, res) => {
     let body = req.body;
     let result = await create(body)
     if (result.ok) {
         // Envía el correo de confirmación
-        const baseUrl = req.protocol + "://" + req.hostname + `:3000/user/update/account-status/${result.id}`
+        const baseUrl = req.protocol + "://" + req.hostname + `:3000/api/user/update/account-status/${result.id}`
         const data = {
             from: "S. Otzoy",
             to: body.email,
@@ -36,7 +36,7 @@ app.post('/user/signup', async (req, res) => {
     }
 })
 
-app.post('/user/login', async (req, res) => {
+router.post('/user/login', async (req, res) => {
     let body = req.body
     let result = await login(body)
     if (result.ok) {
@@ -52,7 +52,7 @@ app.post('/user/login', async (req, res) => {
     }
 })
 
-app.get('/user/info', checkToken, async (req, res) => {
+router.get('/user/info', checkToken, async (req, res) => {
     let body = req.body
     let result = await getById(body)
     if (result.ok) {
@@ -63,7 +63,7 @@ app.get('/user/info', checkToken, async (req, res) => {
 })
 
 
-app.put('/user/update/info', checkToken, async (req, res) => {
+router.put('/user/update/info', checkToken, async (req, res) => {
     let body = req.body
     let result = await update(body)
     if (result.ok) {
@@ -73,7 +73,7 @@ app.put('/user/update/info', checkToken, async (req, res) => {
     return res.status(500).json({ ok: false })
 })
 
-app.put('/user/update/pwd', checkToken, async (req, res) => {
+router.put('/user/update/pwd', checkToken, async (req, res) => {
     let body = req.body
     let result = await updatePwd(body)
     if (result.ok) {
@@ -84,7 +84,7 @@ app.put('/user/update/pwd', checkToken, async (req, res) => {
 })
 
 
-app.get('/user/update/account-status/:id', async (req, res) => {
+router.get('/user/update/account-status/:id', async (req, res) => {
     const id = req.params.id
     const result = await confirm(id)
     if (result.ok) {
@@ -93,4 +93,4 @@ app.get('/user/update/account-status/:id', async (req, res) => {
     return res.status(500).send(result)
 })
 
-module.exports = app
+module.exports = router
