@@ -4,12 +4,13 @@ const bcrypt = require('bcrypt')
 const { sign } = require('jsonwebtoken')
 
 async function create(req) {
-    let con
+    let con, result
     // consulta a ejecutar
-    const query = "INSERT INTO MIAP2.USUARIO(NOMBRE, APELLIDO, PAIS, FECHA_NAC," +
+    const insert_query = "INSERT INTO MIAP2.USUARIO(NOMBRE, APELLIDO, PAIS, FECHA_NAC," +
         "CORREO, CONTRA, FOTO, CREADO_EN) VALUES(" +
         ":nom, :ape, :pai, TO_DATE(:fec,'yyyy-mm-dd')," +
         ":cor, :pwd, :ft, :cre)"
+    const select_query = "SELECT usuario_id FROM miap2.usuario where correo = :correo"
     // se encripta la contraseña
     const pwd = bcrypt.hashSync(req.pwd, 10)
     // datos a insertar
@@ -17,7 +18,8 @@ async function create(req) {
     req.date, req.email, pwd, req.photo, new Date()]
     try {
         con = await OracleDB.getConnection(dbconfig)
-        await con.execute(query, binds, { autoCommit: true })
+        await con.execute(insert_query, binds, { autoCommit: true })
+        result = await con.execute(select_query, [req.email])
     } catch (err) {
         console.error(err)
         return { ok: false, err }
@@ -30,7 +32,7 @@ async function create(req) {
             })
         }
     }
-    return { ok: true }
+    return { ok: true, id: result.rows[0][0] }
 }
 
 /**
@@ -41,11 +43,9 @@ async function create(req) {
 async function login(req) {
     let con, result
     // consulta a ejecutar
-    const query = "SELECT usuario_id, contra, esadmin" +
+    const query = "SELECT usuario_id, contra, esadmin, confirmado" +
         " FROM miap2.usuario " +
         " WHERE correo = :correo"
-    // se encripta la contraseña
-    const pwd = bcrypt.hashSync(req.pwd, 10)
     // datos a insertar
     const binds = [req.email]
     try {
@@ -64,14 +64,25 @@ async function login(req) {
         }
     }
     if (result.rows.length == 1) {
-        if (bcrypt.compareSync(req.pwd, result.rows[0][1])) {
-            let token = sign({ id: result.rows[0][0], esAdmin: result.rows[0][2] }, 'seed-de-dessarollo-miap2', { expiresIn: '48h' })
-            return { ok: true, token }
+        let confirmado = result.rows[0][3]
+        let pwd = result.rows[0][1]
+        if (confirmado === 1) {
+            if (bcrypt.compareSync(req.pwd, pwd)) {
+                let id = result.rows[0][0]
+                let esAdmin = result.rows[0][2]
+                let token = sign({ id, esAdmin, confirmado },
+                    'seed-de-dessarollo-miap2',
+                    { expiresIn: '48h' })
+                // Credenciales correctas y correo confirmado
+                return { ok: true, token }
+            }
         } else {
-            return { ok: false }
+            // Usuario aún no está confirmado
+            return { ok: false, status: 403 }
         }
     }
-    return { ok: false }
+    // Correo o contraseña incorrecta
+    return { ok: false, status: 401 }
 }
 
 /**
@@ -114,4 +125,73 @@ async function getById(req) {
     return { ok: false }
 }
 
-module.exports = { create, login, getById }
+async function update(req) {
+    let con, result
+    const query = "UPDATE miap2.usuario set nombre = :name, " +
+        " apellido = :surname, fecha_nac = :bday, foto = :photo " +
+        " WHERE usuario_id = :id"
+    const binds = [req.name, req.surname, req.birthday, req.photo, req.id]
+    try {
+        con = await OracleDB.getConnection(dbconfig)
+        result = await con.execute(query, binds, { autoCommit: true })
+    } catch (err) {
+        console.error(err)
+        return { ok: false, err }
+    } finally {
+        if (con) {
+            con.release((err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        }
+    }
+    return { ok: true, result: result.rowsAffected }
+}
+
+async function updatePwd(req) {
+    let con, result
+    const query = "UPDATE miap2.usuario set contra = :pwd " +
+        " WHERE usuario_id = :id"
+    const pwd = bcrypt.hashSync(req.pwd, 10)
+    const binds = [pwd, req.id]
+    try {
+        con = await OracleDB.getConnection(dbconfig)
+        result = await con.execute(query, binds, { autoCommit: true })
+    } catch (err) {
+        console.error(err)
+        return { ok: false, err }
+    } finally {
+        if (con) {
+            con.release((err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        }
+    }
+    return { ok: true, result: result.rowsAffected }
+}
+
+async function confirm(id) {
+    let con, result
+    const query = "UPDATE miap2.usuario set confirmado = 1 WHERE usuario_id = :id"
+    try {
+        con = await OracleDB.getConnection(dbconfig)
+        result = await con.execute(query, [id], { autoCommit: true })
+    } catch (err) {
+        console.log(`en confirmar -> ${err}`);
+        return { ok: false, err }
+    } finally {
+        if (con) {
+            con.release((err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        }
+    }
+    return { ok: true, result: result.rowsAffected }
+}
+
+module.exports = { create, login, getById, update, updatePwd, confirm }
