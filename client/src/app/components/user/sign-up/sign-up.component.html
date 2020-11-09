@@ -1,1 +1,47 @@
-<p>sign-up works!</p>
+<div class="container vh-100">
+  <div class="row align-items-center h-100">
+    <div class="col mx-auto">
+      <form class="jumbotron">
+        <h3 class="text-center">
+          Nuevo usuario
+        </h3>
+        <hr>
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="txtName">Nombre</label>
+            <input type="text" class="form-control" id="txtName" required autofocus>
+          </div>
+          <div class="form-group col">
+            <label for="txtSurname">Apellido</label>
+            <input type="text" class="form-control" id="txtSurname" required>
+          </div>
+          <div class="form-group col">
+            <label for="txtDate">Fecha de nacimiento</label>
+            <input type="date" class="form-control" id="txtDate" required>
+          </div>
+          <div class="form-group col">
+            <label for="txtCountry">País</label>
+            <input type="text" class="form-control" id="txtCountry" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="txtEmail">Correo electrónico</label>
+            <input type="email" class="form-control" id="txtEmail" placeholder="ejemplo@dominio.com" required>
+          </div>
+          <div class="form-group col">
+            <label for="txtPwd">Contraseña</label>
+            <input type="password" class="form-control" id="txtPwd" placeholder="contraseña" required>
+          </div>
+          <div class="form-group col">
+            <label for="txtRefPwd">Confirmar contraseña</label>
+            <input type="password" class="form-control" id="txtRefPwd" placeholder="contraseña" required>
+          </div>
+        </div>
+        <div class="text-right">
+          <button type="submit" class="btn btn-primary">Crear usuario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>  
