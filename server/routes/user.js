@@ -10,10 +10,10 @@ app.post('/user/signup', async (req, res) => {
     let result = await create(body)
     if (result.ok) {
         // Envía el correo de confirmación
-        const baseUrl = req.protocol + "://" + req.hostname + `/user/update/account-status/${result.id}`
+        const baseUrl = req.protocol + "://" + req.hostname + `:3000/user/update/account-status/${result.id}`
         const data = {
             from: "S. Otzoy",
-            to: req.email,
+            to: body.email,
             subject: "Activación de cuenta",
             text: `Link de activación ${baseUrl}`,
             html: `<p>Link de activación <strong>${baseUrl}</strong></p>`
