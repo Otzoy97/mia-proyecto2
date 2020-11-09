@@ -9,6 +9,6 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
 // rutas
-app.use(require('./server/routes/index'))
+app.use(require('./routes/index'))
 
 app.listen(3000, ()=> console.log("Servidor listo"))
