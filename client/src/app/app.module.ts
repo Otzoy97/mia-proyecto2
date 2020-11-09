@@ -8,6 +8,7 @@ import { SignUpComponent } from './components/user/sign-up/sign-up.component';
 import { VerifyAccountComponent } from './components/user/verify-account/verify-account.component';
 import { InfoUserComponent } from './components/user/info-user/info-user.component';
 import { HomeComponent } from './components/home/home.component';
+import { NavbarComponent } from './components/user/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { HomeComponent } from './components/home/home.component';
     SignUpComponent,
     VerifyAccountComponent,
     InfoUserComponent,
-    HomeComponent
+    HomeComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
