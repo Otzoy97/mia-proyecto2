@@ -51,7 +51,7 @@ export class SignUpComponent implements OnInit {
     this.userService.singUp(this.user).subscribe(res => {
       console.log(res)
       alert('Usuario creado')
-      this.router.navigate(['/singin'])
+      this.router.navigate(['/signin'])
     }, err => console.log(err))
   }
 }

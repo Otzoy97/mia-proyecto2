@@ -9,15 +9,15 @@ import {VerifyAccountComponent} from './components/user/verify-account/verify-ac
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/singin',
+    redirectTo: '/signin',
     pathMatch: 'full'
   },
   {
-    path: 'singin',
+    path: 'signin',
     component: SignInComponent
   },
   {
-    path: 'singup',
+    path: 'signup',
     component: SignUpComponent
   },
   {
@@ -25,7 +25,7 @@ const routes: Routes = [
     component: InfoUserComponent
   },
   {
-    path: '/api/user/update/account-status/:id',
+    path: 'api/user/update/account-status/:id',
     component: VerifyAccountComponent
   }
 ];
