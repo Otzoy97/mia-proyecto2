@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/services/user.service';
+
 
 @Component({
   selector: 'app-sign-up',
@@ -7,9 +10,48 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignUpComponent implements OnInit {
 
-  constructor() { }
+  user = {
+    name: '',
+    surname: '',
+    country: '',
+    date: '',
+    email: '',
+    pwd: '',
+    pwdRef: '',
+    photo: ''
+  }
+
+  refPwd = {
+    class: '',
+    text: ''
+  }
+
+  constructor(
+    private userService: UserService,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
 
+  signUp(): void {
+    if (this.user.name.trim().length === 0||
+      this.user.surname.trim().length === 0 ||
+      this.user.country.trim().length === 0 ||
+      this.user.date.trim().length === 0 ||
+      this.user.email.trim().length === 0 ||
+      this.user.pwd.trim().length === 0 ||
+      this.user.pwdRef.trim().length === 0) {
+        alert('Llene todos los campos')
+      return
+    }
+    if (this.user.pwd !== this.user.pwdRef) {
+      alert('Contraseñas no coinciden')
+      return
+    }
+    this.userService.singUp(this.user).subscribe(res => {
+      console.log(res)
+      alert('Usuario creado')
+      this.router.navigate(['/singin'])
+    }, err => console.log(err))
+  }
 }
