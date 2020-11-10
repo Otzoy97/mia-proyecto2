@@ -70,11 +70,11 @@ async function login(req) {
             if (bcrypt.compareSync(req.pwd, pwd)) {
                 let id = result.rows[0][0]
                 let esAdmin = result.rows[0][2]
-                let token = sign({ id, esAdmin, confirmado },
+                let token = sign({ id, esAdmin },
                     'seed-de-dessarollo-miap2',
                     { expiresIn: '48h' })
                 // Credenciales correctas y correo confirmado
-                return { ok: true, token }
+                return { ok: true, token, esAdmin }
             }
         } else {
             // Usuario aún no está confirmado
