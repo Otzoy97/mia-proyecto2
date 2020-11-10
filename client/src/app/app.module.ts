@@ -11,6 +11,9 @@ import { InfoUserComponent } from './components/user/info-user/info-user.compone
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/user/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
+import { CuatroCeroTresComponent } from './components/pages/cuatro-cero-tres/cuatro-cero-tres.component';
+import { CuatroCeroUnoComponent } from './components/pages/cuatro-cero-uno/cuatro-cero-uno.component';
+import { CincoCeroCeroComponent } from './components/pages/cinco-cero-cero/cinco-cero-cero.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,7 +22,10 @@ import { HttpClientModule } from '@angular/common/http';
     VerifyAccountComponent,
     InfoUserComponent,
     HomeComponent,
-    NavbarComponent
+    NavbarComponent,
+    CuatroCeroTresComponent,
+    CuatroCeroUnoComponent,
+    CincoCeroCeroComponent
   ],
   imports: [
     BrowserModule,
