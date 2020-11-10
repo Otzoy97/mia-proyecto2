@@ -1,4 +1,4 @@
-const { create, login, getById, update, confirm } = require('../controllers/user')
+const { create, login, getById, update, confirm, updatePhoto } = require('../controllers/user')
 const { checkToken } = require('../utils/middlewares/auth');
 const { Router } = require('express')
 
@@ -73,6 +73,16 @@ router.put('/user/update/info', checkToken, async (req, res) => {
     return res.status(500).json({ ok: false })
 })
 
+router.put('/user/update/photo', checkToken, async (req, res) => {
+    let body = req.body
+    let result = await updatePhoto(body)
+    if (result.ok) {
+        return res.status(200).send(result)
+    }
+    console.error(result.err)
+    return res.status(500).json({ ok: false })
+})
+
 router.put('/user/update/pwd', checkToken, async (req, res) => {
     let body = req.body
     let result = await updatePwd(body)
@@ -83,6 +93,15 @@ router.put('/user/update/pwd', checkToken, async (req, res) => {
     return res.status(500).json({ ok: false })
 })
 
+router.put('/user/recover/pwd', async (req, res) => {
+    let body = req.body
+    let result = await updatePwd(body)
+    if (result.ok) {
+        return res.status(200).send(result)
+    }
+    console.error(result.err)
+    return res.status(500).json({ ok: false })
+})
 
 router.get('/user/update/account-status/:id', async (req, res) => {
     const id = req.params.id
@@ -91,6 +110,26 @@ router.get('/user/update/account-status/:id', async (req, res) => {
         return res.status(200).send(result)
     }
     return res.status(500).send(result)
+})
+
+router.get('/user/recover-pwd',(req, res)=> {
+    const body = req.body
+    const baseUrl= req.protocol + "://" + req.hostname + `:4200/api/user/recover-pwd`
+    const data = {
+        from: "S. Otzoy",
+        to: body.email,
+        subject: "Recuperación de contraseña",
+        text: `Recuperación de contraseña ${baseUrl}`,
+        html: `<p>Recuperación de contraseña <strong><a href="${baseUrl}">Verificar cuenta</a></strong></p>`
+    }
+    emailService.sendMail(data, (err, inf) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(inf)
+        }
+    })
+    return res.status(200).send({ ok: true })
 })
 
 module.exports = router

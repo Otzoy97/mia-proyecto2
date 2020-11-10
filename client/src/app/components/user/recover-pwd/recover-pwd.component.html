@@ -1,0 +1,32 @@
+<main role="main" class="container">
+  <div class="row jumbotron">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h1>Reestablecer contraseña</h1>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <form (submit)="recover()">
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label for="txtPwd">Contraseña</label>
+                    <input type="password" class="form-control" [(ngModel)]="this.pwd" name="txtPwd" id="txtPwd" required>
+                  </div>
+                  <div class="form-group col">
+                    <label for="txtPwdRef">Confirmar contraseña</label>
+                    <input type="password" class="form-control" [(ngModel)]="this.pwdRef" name="txtPwdRef" id="txtPwdRef" required>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <button class="btn btn-outline-primary" type="submit">Cambiar contraseña</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
