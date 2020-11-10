@@ -25,7 +25,7 @@ const routes: Routes = [
     component: InfoUserComponent
   },
   {
-    path: 'user/auth',
+    path: '/api/user/update/account-status/:id',
     component: VerifyAccountComponent
   }
 ];
