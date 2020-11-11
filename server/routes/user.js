@@ -112,7 +112,7 @@ router.get('/user/update/account-status/:id', async (req, res) => {
     return res.status(500).send(result)
 })
 
-router.get('/user/recover-pwd', async (req, res)=> {
+router.post('/user/recover-pwd', async (req, res)=> {
     const body = req.body
     const result = await getByEmail(body)
     if (!result.ok) {
