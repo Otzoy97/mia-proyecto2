@@ -31,6 +31,10 @@ export class SignUpComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit(): void {
+    let token = localStorage.getItem('token')
+    if (this.userService.loggedIn()) {
+      this.router.navigate(['/user/info'])
+    }
   }
 
   signUp(): void {
@@ -48,10 +52,16 @@ export class SignUpComponent implements OnInit {
       alert('Contraseñas no coinciden')
       return
     }
-    this.userService.singUp(this.user).subscribe(res => {
-      console.log(res)
-      alert('Usuario creado')
-      this.router.navigate(['/signin'])
-    }, err => console.log(err))
+    this.userService.singUp(this.user).subscribe(() => {
+        alert('Usuario creado')
+        this.router.navigate(['/signin'])
+      
+    }, (err) => {
+      if (err.status === 422) {
+        alert('Correo ya fue utilizado')
+      } else {
+        this.router.navigate(['/error-500'])
+      }
+    })
   }
 }
