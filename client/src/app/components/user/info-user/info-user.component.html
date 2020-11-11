@@ -18,7 +18,8 @@
       <form class="card">
         <div class="hovereffect">
           <!-- ../../../../../../uploads/ -->
-          <img class="card-img img-reponsive" [src]="user.photo" src="../../../../assets/default-user-image.png" alt="...">
+          <!-- <div [innerHTML]="user.photo" ></div> -->
+          <img class="card-img img-reponsive" *ngIf="user.photo" [src]="user.photo | safeHtml" src="../../../../assets/default-user-image.png" alt="...">
           <div class="overlay">
             <span class="info">
               <a href="#">Subir imagen</a>
@@ -28,7 +29,7 @@
         </div>
         <div class="card-footer">
           <div class="text-center">
-            <button class="btn btn-outline-primary btn-sm" type="submit">Actualizar imagen</button>
+            <button class="btn btn-outline-primary btn-sm" (click)="updateImg()" type="submit">Actualizar imagen</button>
           </div>
         </div>
       </form>
@@ -42,7 +43,7 @@
           <h5 class="card-title" [innerText]="user.email"></h5>
           <div class="row">
             <div class="col">
-              <form>
+              <form (submit)="updateInfo()" >
                 <div class="form-row">
                   <div class="form-group col">
                     <label for="txtName">Nombre</label>
@@ -60,7 +61,7 @@
                   </div>
                   <div class="form-group col">
                     <label for="txtDate">Fecha de nacimiento</label>
-                    <input type="date" class="form-control" name="txtDate" ([ngModel])="user.date" value={{dateFormatted}} id="txtDate" required>
+                    <input type="date" class="form-control" name="txtDate" ([ngModel])="user.birthday" value={{user.birthday}} id="txtDate" required>
                   </div>
                 </div>
                 <div class="text-right">
@@ -79,7 +80,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <form>
+              <form (submit)="updatePwd()">
                 <div class="form-row">
                   <div class="form-group col">
                     <label for="txtPwd">Contraseña</label>

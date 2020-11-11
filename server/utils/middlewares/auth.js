@@ -9,16 +9,14 @@ function checkToken(req, res, next){
                 msg: 'Token inválido'
             })
         }
-        req.body = {
-            id : dec.id,
-            esAdmin: dec.esAdmin
-        }
+        req.body.id = dec.id
+        req.body.esAdmin = dec.esAdmin
         next()
     })
 }
 
 function isAdmin(req, res, next) {
-    if(req.esAdmin) {
+    if(req.body.esAdmin) {
         next()
         return;
     }

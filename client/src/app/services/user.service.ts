@@ -24,16 +24,20 @@ export class UserService {
   }
   // Actualizar contraseña
   updatePassword(pwd:any) {
-    return this.http.put(this.URL + '/user/update/pwd',pwd,{observe:'response',headers: {'token': localStorage.getItem['token']}})
+    let header = new HttpHeaders().set('token', localStorage.getItem('token'))
+    return this.http.put(this.URL + '/user/update/pwd',pwd,{observe:'response',headers: header})
   }
   // Actualizar información
   updateInfo(user:any) {
-    return this.http.put(this.URL + '/user/update/info',user,{observe:'response',headers: {'token': localStorage.getItem['token']}})
+    let header = new HttpHeaders().set('token', localStorage.getItem('token'))
+    return this.http.put<any>(this.URL + '/user/update/info',user,{observe:'response',headers: header})
   }
   // Actualizar fotografía
-  updatePhoto(photo:any) {
+  updatePhoto(photo:File) {
+    let formData = new FormData()
+    formData.append('photo', photo, photo.name)
     let header = new HttpHeaders().set('token', localStorage.getItem('token'))
-    return this.http.put(this.URL + '/user/update/photo',photo,{observe:'response',headers: header})
+    return this.http.put(this.URL + '/user/update/photo',formData,{observe:'response',headers: header})
   }
   // Recuperar información
   getInfo() {
@@ -41,8 +45,13 @@ export class UserService {
 
     return this.http.get<any>(this.URL +'/user/info',{observe:'response',headers: header})
   }
+  getPhoto() {
+    let header = new HttpHeaders().set('token', localStorage.getItem('token'))
+
+    return this.http.get(this.URL +'/user/info/photo',{observe:'response',headers: header, responseType: 'blob'})
+  }
   // Enviar recuperación de contraseña
-  sendRecoverPassword(email) {
+  sendRecoverPassword(email:any) {
     return this.http.post<any>(this.URL + '/user/recover-pwd',email,{observe:'response'})
   }
   logout() {

@@ -1,10 +1,13 @@
-const { create, login, getById, update, confirm, updatePhoto, getByEmail } = require('../controllers/user')
+const { create, login, getById, update, updatePwd,confirm, updatePhoto, getByEmail } = require('../controllers/user')
 const { checkToken } = require('../utils/middlewares/auth');
 const { Router } = require('express')
-
+const fileUpload = require('express-fileupload')
+const path = require('path')
+const fs = require('fs')
 const emailService = require('../utils/nodemailer');
 const router = Router()
 
+router.use(fileUpload())
 router.post('/user/signup', async (req, res) => {
     let body = req.body;
     let result = await create(body)
@@ -55,8 +58,21 @@ router.post('/user/login', async (req, res) => {
 router.get('/user/info', checkToken, async (req, res) => {
     let body = req.body
     let result = await getById(body)
+    let photo = path.resolve(__dirname, `../../${result.result.photo}`)
     if (result.ok) {
         return res.status(200).send(result)
+    }
+    console.log(result.err)
+    return res.status(500).json({ ok: false })
+})
+
+
+router.get('/user/info/photo', checkToken, async (req, res) => {
+    let body = req.body
+    let result = await getById(body)
+    let photo = path.resolve(__dirname, `../../${result.result.photo}`)
+    if (result.ok) {
+        return res.status(200).sendFile(photo)
     }
     console.log(result.err)
     return res.status(500).json({ ok: false })
@@ -75,12 +91,18 @@ router.put('/user/update/info', checkToken, async (req, res) => {
 
 router.put('/user/update/photo', checkToken, async (req, res) => {
     let body = req.body
-    let result = await updatePhoto(body)
-    if (result.ok) {
-        return res.status(200).send(result)
-    }
-    console.error(result.err)
-    return res.status(500).json({ ok: false })
+    let file = req.files
+    let photo = file.photo
+    let ext = photo.name.split('.')
+    ext = ext[ext.length-1]
+    const ruta = `uploads/usuario/u-${body.id}`
+    photo.mv(ruta, async (err)=>{
+        if(err) {
+            return res.status(500).send({ok: false})
+        }
+        let result = await updatePhoto({photo: ruta,id :body.id})
+    })
+    return res.status(200).send({ok:true})
 })
 
 router.put('/user/update/pwd', checkToken, async (req, res) => {

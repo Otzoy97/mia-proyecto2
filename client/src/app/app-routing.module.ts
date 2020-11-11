@@ -40,7 +40,7 @@ const routes: Routes = [
     component: CincoCeroCeroComponent
   },
   {
-    path: 'api/user/recover-pwd',
+    path: 'api/user/recover-pwd/:id',
     component: RecoverPwdComponent
   }
 ];

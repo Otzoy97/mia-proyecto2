@@ -87,13 +87,13 @@ async function login(req) {
 
 async function getByEmail(req) {
     let con, result
-    const query = "SELECT usuario_id" +
-        "FROM USUARIO WHERE correo = :correo"
+    const query = "SELECT usuario_id " +
+        "FROM miap2.usuario WHERE correo = :correo"
     const binds = [req.email]
     try {
         con = await OracleDB.getConnection(dbconfig)
         result = await con.execute(query, binds, { autoCommit: true, maxRows: 1 })
-    } catch (error) {
+    } catch (err) {
         console.error(err)
         return { ok: false, err }
     } finally {
@@ -105,7 +105,9 @@ async function getByEmail(req) {
             })
         }
     }
+    console.log(result.rows)
     if (result.rows.length >= 1) {
+        
         return {
             ok: true, id : result.rows[0][0]
         }
@@ -126,7 +128,7 @@ async function getById(req) {
     try {
         con = await OracleDB.getConnection(dbconfig)
         result = await con.execute(query, binds, { autoCommit: true, maxRows: 1 })
-    } catch (error) {
+    } catch (err) {
         console.error(err)
         return { ok: false, err }
     } finally {
@@ -155,10 +157,10 @@ async function getById(req) {
 
 async function update(req) {
     let con, result
-    const query = "UPDATE miap2.usuario set nombre = :name, " +
-        " apellido = :surname, fecha_nac = :bday, foto = :photo " +
+    const query = "UPDATE miap2.usuario set nombre = :name, pais = :pais" +
+        " apellido = :surname, fecha_nac = :bday " +
         " WHERE usuario_id = :id"
-    const binds = [req.name, req.surname, req.birthday, req.photo, req.id]
+    const binds = [req.name, req.surname, req.country, req.birthday,  req.id]
     try {
         con = await OracleDB.getConnection(dbconfig)
         result = await con.execute(query, binds, { autoCommit: true })

@@ -46,8 +46,8 @@ export class SignInComponent implements OnInit {
   }
 
   recoveryPwd() {
-    if(this.userRec.trim().length > 0) {
-      this.userService.sendRecoverPassword(this.userRec.trim()).subscribe((res)=>{
+    if(this.userRec.trim().length !== 0) {
+      this.userService.sendRecoverPassword({'email':this.userRec.trim()}).subscribe((response)=>{
         alert('se ha enviado un correo de confirmación')
         this.router.navigate(['/signin'])
       }, (err)=>{

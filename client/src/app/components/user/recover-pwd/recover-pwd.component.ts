@@ -23,12 +23,12 @@ export class RecoverPwdComponent implements OnInit {
       alert('Llene todos los campos')
       return
     }
-    if(this.pwd === this.pwdRef) {
+    if(this.pwd !== this.pwdRef) {
       alert('Contraseñas no coinciden')
       return
     }
     this.user.recoverPassword(this.id,this.pwd).subscribe(()=> {
-      alert('Contraeña actualizada')
+      alert('Contraseña actualizada')
       this.router.navigate(['/signin'])
     }, ()=> {
       this.router.navigate(['error-500'])

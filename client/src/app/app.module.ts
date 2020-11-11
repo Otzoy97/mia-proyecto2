@@ -14,6 +14,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { CuatroCeroUnoComponent } from './components/pages/cuatro-cero-uno/cuatro-cero-uno.component';
 import { CincoCeroCeroComponent } from './components/pages/cinco-cero-cero/cinco-cero-cero.component';
 import { RecoverPwdComponent } from './components/user/recover-pwd/recover-pwd.component';
+import { SafeHtmlPipe } from './safe-html.pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,7 +27,8 @@ import { RecoverPwdComponent } from './components/user/recover-pwd/recover-pwd.c
     NavbarComponent,
     CuatroCeroUnoComponent,
     CincoCeroCeroComponent,
-    RecoverPwdComponent
+    RecoverPwdComponent,
+    SafeHtmlPipe
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 
@@ -8,26 +9,28 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./info-user.component.css']
 })
 export class InfoUserComponent implements OnInit {
-
   fileToUpload: File = null
+  
   user = {
     email: '',
     name: '',
     surname: '',
     country: '',
-    date: '',
+    birthday: '',
     photo: '../../../../assets/default-user-image.png'
   }
 
-  dateFormatted = ''
-  userLoaded = false
+  pwd = ''
+  pwdRef = ''
 
-  constructor(private router : Router, private userServices : UserService) { }
+  userLoaded = false
+  constructor(private router : Router, private userServices : UserService,
+    private sanitization: DomSanitizer) { }
 
   ngOnInit(): void {
-    let token = localStorage.getItem('token')
     if (!this.userServices.loggedIn()) {
       this.router.navigate(['/signin'])
+      return;
     }
     this.userServices.getInfo().subscribe((response)=>{
       console.log(response)
@@ -37,12 +40,16 @@ export class InfoUserComponent implements OnInit {
       this.user.name = result.name
       this.user.surname = result.surname
       this.user.country = result.country
-      this.user.date = result.birthday
+      this.user.birthday = result.birthday
       if(result.photo !== null) {
-        this.user.photo = result.photo
+        this.userServices.getPhoto().subscribe((response) =>{
+          const imgURL = URL.createObjectURL(response.body)
+          this.user.photo =  imgURL
+        })
+        
       }
-      let date = new Date(this.user.date)
-      this.dateFormatted = date.getFullYear() + '-' + date.getMonth()+1 + '-' + date.getDate()
+      let date = new Date(result.birthday)
+      this.user.birthday = date.getFullYear() + '-' + date.getMonth()+1 + '-' + date.getDate()
       this.userLoaded = true
     },(err)=>{
       console.log(err)
@@ -59,11 +66,47 @@ export class InfoUserComponent implements OnInit {
     let fileList : FileList = event.target.files
     if(fileList.length > 0) {
       this.fileToUpload = fileList[0]
-      console.log(this.fileToUpload)
     }
   }
 
   updateImg() {
-    console.log(this.fileToUpload)
+    if (this.fileToUpload === null){
+      return;
+    }
+    console.log(this.fileToUpload.name)
+    this.userServices.updatePhoto(this.fileToUpload).subscribe(()=>{
+      this.userServices.getPhoto().subscribe((response) =>{
+        const imgURL = URL.createObjectURL(response.body)
+        this.user.photo = imgURL
+      })
+    }, (err)=> {
+      console.log(err)
+    })
   }
+
+  updateInfo() {
+    if(this.user.country.trim().length === 0 ||
+    this.user.name.trim().length === 0 ||
+    this.user.surname.trim().length === 0 ||
+    this.user.birthday.trim().length === 0 ){
+      alert('Lleno toda la info para actualizar')
+      return;
+    }
+    this.userServices.updateInfo(this.user).subscribe((res)=>{console.log(res)},(err)=>{console.log(err)})
+    this.router.navigate(['/user/info'])
+  }
+
+  updatePwd() {
+    if(this.pwd.length === 0 || this.pwdRef.length === 0){
+      alert('Escriba las dos contraseñas')
+      return;
+    }
+    if(this.pwd !== this.pwdRef){
+      alert('Las contraseñas no coinciden')
+      return;
+    }
+    this.userServices.updatePassword({pwd:this.pwd}).subscribe((res)=>{console.log(res)},(err)=>{console.log(err)})
+    this.router.navigate(['/user/info'])
+  }
+
 }
