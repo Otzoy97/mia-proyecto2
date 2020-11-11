@@ -85,6 +85,34 @@ async function login(req) {
     return { ok: false, status: 401 }
 }
 
+async function getByEmail(req) {
+    let con, result
+    const query = "SELECT usuario_id" +
+        "FROM USUARIO WHERE correo = :correo"
+    const binds = [req.email]
+    try {
+        con = await OracleDB.getConnection(dbconfig)
+        result = await con.execute(query, binds, { autoCommit: true, maxRows: 1 })
+    } catch (error) {
+        console.error(err)
+        return { ok: false, err }
+    } finally {
+        if (con) {
+            con.release((err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        }
+    }
+    if (result.rows.length >= 1) {
+        return {
+            ok: true, id : result.rows[0][0]
+        }
+    }
+    return { ok: false }
+}
+
 /**
  * Recupera a un usuario por el id
  * 
@@ -149,6 +177,29 @@ async function update(req) {
     return { ok: true, result: result.rowsAffected }
 }
 
+async function updatePhoto(req) {
+    let con, result
+    const query = "UPDATE miap2.usuario set foto = :photo " +
+        " WHERE usuario_id = :id"
+    const binds = [req.photo, req.id]
+    try {
+        con = await OracleDB.getConnection(dbconfig)
+        result = await con.execute(query, binds, { autoCommit: true })
+    } catch (err) {
+        console.error(err)
+        return { ok: false, err }
+    } finally {
+        if (con) {
+            con.release((err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        }
+    }
+    return { ok: true, result: result.rowsAffected }
+}
+
 async function updatePwd(req) {
     let con, result
     const query = "UPDATE miap2.usuario set contra = :pwd " +
@@ -194,4 +245,4 @@ async function confirm(id) {
     return { ok: true, result: result.rowsAffected }
 }
 
-module.exports = { create, login, getById, update, updatePwd, confirm }
+module.exports = { create, login, getById, update, updatePwd, confirm, updatePhoto, getByEmail }

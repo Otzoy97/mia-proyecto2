@@ -1,8 +1,8 @@
-const { create, login, getById, update, confirm, updatePhoto } = require('../controllers/user')
+const { create, login, getById, update, confirm, updatePhoto, getByEmail } = require('../controllers/user')
 const { checkToken } = require('../utils/middlewares/auth');
 const { Router } = require('express')
 
-const emailService = require('../utils/nodemailer')
+const emailService = require('../utils/nodemailer');
 const router = Router()
 
 router.post('/user/signup', async (req, res) => {
@@ -112,9 +112,13 @@ router.get('/user/update/account-status/:id', async (req, res) => {
     return res.status(500).send(result)
 })
 
-router.get('/user/recover-pwd',(req, res)=> {
+router.get('/user/recover-pwd', async (req, res)=> {
     const body = req.body
-    const baseUrl= req.protocol + "://" + req.hostname + `:4200/api/user/recover-pwd`
+    const result = await getByEmail(body)
+    if (!result.ok) {
+        return res.status(500).send({ok: false})
+    }
+    const baseUrl= req.protocol + "://" + req.hostname + `:4200/api/user/recover-pwd/${result.id}`
     const data = {
         from: "S. Otzoy",
         to: body.email,
