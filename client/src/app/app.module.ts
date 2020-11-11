@@ -11,7 +11,6 @@ import { InfoUserComponent } from './components/user/info-user/info-user.compone
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/user/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
-import { CuatroCeroTresComponent } from './components/pages/cuatro-cero-tres/cuatro-cero-tres.component';
 import { CuatroCeroUnoComponent } from './components/pages/cuatro-cero-uno/cuatro-cero-uno.component';
 import { CincoCeroCeroComponent } from './components/pages/cinco-cero-cero/cinco-cero-cero.component';
 import { RecoverPwdComponent } from './components/user/recover-pwd/recover-pwd.component';
@@ -24,7 +23,6 @@ import { RecoverPwdComponent } from './components/user/recover-pwd/recover-pwd.c
     InfoUserComponent,
     HomeComponent,
     NavbarComponent,
-    CuatroCeroTresComponent,
     CuatroCeroUnoComponent,
     CincoCeroCeroComponent,
     RecoverPwdComponent
