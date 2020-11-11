@@ -7,6 +7,7 @@ import {InfoUserComponent} from './components/user/info-user/info-user.component
 import {VerifyAccountComponent} from './components/user/verify-account/verify-account.component'
 import { CuatroCeroUnoComponent } from './components/pages/cuatro-cero-uno/cuatro-cero-uno.component';
 import { CincoCeroCeroComponent } from './components/pages/cinco-cero-cero/cinco-cero-cero.component';
+import { RecoverPwdComponent } from './components/user/recover-pwd/recover-pwd.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
   {
     path: 'error-500',
     component: CincoCeroCeroComponent
+  },
+  {
+    path: 'api/user/recover-pwd',
+    component: RecoverPwdComponent
   }
 ];
 
