@@ -14,31 +14,45 @@ export class SignInComponent implements OnInit {
     pwd: ''
   }
 
+  userRec = ''
+
   constructor(private router: Router, private userService: UserService) { }
 
   ngOnInit(): void {
+    let token = localStorage.getItem('token')
+    if (this.userService.loggedIn()) {
+      this.router.navigate(['/user/info'])
+    }
   }
 
   singin() {
-    if (this.user.email.trim.length === 0 || this.user.pwd.length === 0) {
+    if (this.user.email.trim().length === 0 || this.user.pwd.length === 0) {
       alert('Correo o contraseña inválidos')
       return;
     }
     this.userService.singIn(this.user).subscribe((response)=> {
-      if (response.status === 200) {
         localStorage.setItem('token', response.body.token)
         localStorage.setItem('esAdmin', response.body.esAdmin)
         this.router.navigate(['/user/info'])
-      } else if (response.status === 403) {
+    }, (err)=>{
+      if (err.status === 403) {
         alert('Correo no confirmado')
-      } else if (response.status === 401) {
+      } else if (err.status === 401) {
         alert('Correo o contraseña incorrectos')
       } else {
         this.router.navigate(['/error-500']) 
       }
-    }, (err)=>{
-      console.error(err)
     })
   }
 
+  recoveryPwd() {
+    if(this.userRec.trim().length > 0) {
+      this.userService.sendRecoverPassword(this.userRec.trim()).subscribe((res)=>{
+        alert('se ha enviado un correo de confirmación')
+        this.router.navigate(['/signin'])
+      }, (err)=>{
+        console.log(err)
+      })
+    }
+  }
 }
